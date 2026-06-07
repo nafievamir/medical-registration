@@ -15,13 +15,35 @@ jobs:
         with:
           dotnet-version: 8.0
       
-      - name: Restore & Build
+      - name: Restore & Build MedicalWeb
         run: |
-          dotnet restore MedicalWeb
-          dotnet build MedicalWeb --no-restore
+          cd MedicalWeb
+          dotnet restore
+          dotnet build --no-restore
+      
+      - name: Restore & Build MedicalWeb.Tests
+        run: |
+          cd MedicalWeb.Tests
+          dotnet restore
+          dotnet build --no-restore
       
       - name: Run Unit Tests
-        run: dotnet test MedicalWeb.Tests --filter "FullyQualifiedName~UnitTests"
+        run: |
+          cd MedicalWeb.Tests
+          dotnet test --filter "FullyQualifiedName~UnitTests"
+      
+      - name: Start MedicalWeb server (background)
+        run: |
+          cd MedicalWeb
+          dotnet run --urls "http://localhost:5167" &
+          sleep 10
       
       - name: Run Integration Tests
-        run: dotnet test MedicalWeb.Tests --filter "FullyQualifiedName~SimpleIntegrationTests"
+        run: |
+          cd MedicalWeb.Tests
+          dotnet test --filter "FullyQualifiedName~SimpleIntegrationTests"
+      
+      - name: Run E2E Tests
+        run: |
+          cd MedicalWeb.Tests
+          dotnet test --filter "FullyQualifiedName~E2ETests"
