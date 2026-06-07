@@ -19,21 +19,24 @@ jobs:
         dotnet-version: 8.0
 
     - name: Restore dependencies
-      run: dotnet restore MedicalWeb/MedicalWeb.csproj
+      run: dotnet restore MedicalWeb
 
     - name: Build
-      run: dotnet build MedicalWeb/MedicalWeb.csproj --no-restore
+      run: dotnet build MedicalWeb --no-restore
 
     - name: Run Unit Tests
-      run: dotnet test MedicalWeb.Tests/MedicalWeb.Tests.csproj --filter "FullyQualifiedName~UnitTests" --verbosity normal
+      run: |
+        cd MedicalWeb.Tests
+        dotnet test --filter "FullyQualifiedName~UnitTests" --verbosity normal
 
     - name: Run Integration Tests
-      run: dotnet test MedicalWeb.Tests/MedicalWeb.Tests.csproj --filter "FullyQualifiedName~SimpleIntegrationTests" --verbosity normal
-
-    - name: Run E2E Tests (requires running app)
       run: |
-        cd MedicalWeb
-        dotnet run &
+        cd MedicalWeb.Tests
+        dotnet test --filter "FullyQualifiedName~SimpleIntegrationTests" --verbosity normal
+
+    - name: Run E2E Tests
+      run: |
+        dotnet run --project MedicalWeb &
         sleep 10
-        cd ../MedicalWeb.Tests
+        cd MedicalWeb.Tests
         dotnet test --filter "FullyQualifiedName~E2ETests" --verbosity normal
