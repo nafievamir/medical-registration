@@ -2,16 +2,19 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
-let appointments = [];
+app.post('/webhook/doctor_created', (req, res) => {
+    console.log('[APPOINTMENT] Получен новый врач:', req.body);
+    res.json({ status: 'ok' });
+});
+
+app.post('/webhook/appointment_created', (req, res) => {
+    console.log('[APPOINTMENT] Получена новая запись:', req.body);
+    res.json({ status: 'ok' });
+});
 
 app.post('/appointment/create', (req, res) => {
-    const newApp = {
-        id: appointments.length + 1,
-        ...req.body,
-        status: 'confirmed'
-    };
-    appointments.push(newApp);
-    res.status(201).json(newApp);
+    console.log('[APPOINTMENT] Создание записи:', req.body);
+    res.json({ id: 1, status: 'confirmed' });
 });
 
 app.listen(3000, () => console.log('Appointment service on 3000'));
