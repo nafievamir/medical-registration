@@ -1,0 +1,25 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\fahre\\OneDrive\\Рабочий стол\\medical-registration\\MedicalWeb\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.MedicalWeb.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.MedicalWeb.props",
+      "PackagePath": "build\\MedicalWeb.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.MedicalWeb.props",
+      "PackagePath": "buildMultiTargeting\\MedicalWeb.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.MedicalWeb.props",
+      "PackagePath": "buildTransitive\\MedicalWeb.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

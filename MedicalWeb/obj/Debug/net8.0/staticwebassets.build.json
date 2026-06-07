@@ -1,0 +1,39 @@
+{
+  "Version": 1,
+  "Hash": "8FDemO2U/ZomHiM7wbZ9aMu58U51xJb+9kNy6Jgggo4=",
+  "Source": "MedicalWeb",
+  "BasePath": "_content/MedicalWeb",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "MedicalWeb\\wwwroot",
+      "Source": "MedicalWeb",
+      "ContentRoot": "C:\\Users\\fahre\\OneDrive\\Рабочий стол\\medical-registration\\MedicalWeb\\wwwroot\\",
+      "BasePath": "_content/MedicalWeb",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\fahre\\OneDrive\\Рабочий стол\\medical-registration\\MedicalWeb\\wwwroot\\index.html",
+      "SourceId": "MedicalWeb",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\fahre\\OneDrive\\Рабочий стол\\medical-registration\\MedicalWeb\\wwwroot\\",
+      "BasePath": "_content/MedicalWeb",
+      "RelativePath": "index.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\index.html"
+    }
+  ]
+}
