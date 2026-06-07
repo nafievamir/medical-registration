@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Медицинская регистратура</title>
+    <style>
+        body { font-family: Arial; margin: 20px; background: #f0f2f5; }
+        .card { background: white; padding: 20px; margin: 10px 0; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button { background: #007bff; color: white; border: none; padding: 8px 16px; margin: 5px; border-radius: 5px; cursor: pointer; }
+        input { padding: 8px; margin: 5px; border: 1px solid #ddd; border-radius: 5px; }
+        .log { background: #1e1e1e; color: #0f0; padding: 10px; font-family: monospace; height: 200px; overflow-y: auto; }
+        .error { color: #ff4444; }
+        .success { color: #00ff00; }
+        h1, h2 { color: #333; }
+    </style>
+</head>
+<body>
+    <h1>🏥 Медицинская регистратура</h1>
+    
+    <div class="card">
+        <h2>👨‍⚕️ Врачи (порт 5001)</h2>
+        <input type="text" id="name" placeholder="ФИО">
+        <input type="text" id="specialty" placeholder="Специальность">
+        <button onclick="createDoctor()">➕ Добавить</button>
+        <button onclick="loadDoctors()">📋 Обновить</button>
+        <div id="doctorsList"></div>
+    </div>
+    
+    <div class="card">
+        <h2>📅 Расписание (порт 5002)</h2>
+        <input type="number" id="docId" placeholder="ID врача">
+        <input type="text" id="time" placeholder="Время">
+        <button onclick="addSlot()">➕ Добавить слот</button>
+        <div id="slotsList"></div>
+    </div>
+    
+    <div class="card">
+        <h2>📝 Запись (порт 3000)</h2>
+        <input type="number" id="patId" placeholder="ID пациента">
+        <input type="number" id="docId2" placeholder="ID врача">
+        <input type="datetime-local" id="dt">
+        <button onclick="createAppointment()">✅ Создать запись</button>
+        <div id="appointmentsList"></div>
+    </div>
+    
+    <div class="card">
+        <h2>📡 Логи</h2>
+        <div id="log" class="log">Готов к работе...</div>
+    </div>
+
+    <script>
+        function addLog(msg, isError = false) {
+            const logDiv = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const cls = isError ? 'error' : 'success';
+            logDiv.innerHTML += `<div class="${cls}">[${time}] ${msg}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        async function loadDoctors() {
+            addLog('Загрузка врачей...');
+            try {
+                const res = await fetch('http://localhost:5001/doctors');
+                const data = await res.json();
+                document.getElementById('doctorsList').innerHTML = data.map(d => `<div>✅ ${d.name} (${d.specialty}) ID:${d.id}</div>`).join('');
+                addLog(`Загружено ${data.length} врачей`);
+            } catch(e) { addLog(`Ошибка: ${e.message}`, true); }
+        }
+
+        async function createDoctor() {
+            const name = document.getElementById('name').value;
+            const specialty = document.getElementById('specialty').value;
+            if(!name || !specialty) { addLog('Заполните поля', true); return; }
+            addLog(`Создание врача: ${name}`);
+            try {
+                const res = await fetch('http://localhost:5001/doctors', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name, specialty})
+                });
+                const data = await res.json();
+                addLog(`Врач создан ID:${data.id}`);
+                loadDoctors();
+            } catch(e) { addLog(`Ошибка: ${e.message}`, true); }
+        }
+
+        async function addSlot() {
+            const doctor_id = document.getElementById('docId').value;
+            const time = document.getElementById('time').value;
+            if(!doctor_id || !time) { addLog('Заполните поля', true); return; }
+            addLog(`Добавление слота: врач ${doctor_id}, ${time}`);
+            try {
+                const res = await fetch('http://localhost:5002/schedule/add', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({doctor_id: parseInt(doctor_id), time})
+                });
+                const data = await res.json();
+                addLog(`Слот добавлен: ${data.status}`);
+            } catch(e) { addLog(`Ошибка: ${e.message}`, true); }
+        }
+
+        async function createAppointment() {
+            const patient_id = document.getElementById('patId').value;
+            const doctor_id = document.getElementById('docId2').value;
+            const datetime = document.getElementById('dt').value;
+            if(!patient_id || !doctor_id || !datetime) { addLog('Заполните поля', true); return; }
+            addLog(`Создание записи: пациент ${patient_id}, врач ${doctor_id}`);
+            try {
+                const res = await fetch('http://localhost:3000/appointment/create', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({patient_id: parseInt(patient_id), doctor_id: parseInt(doctor_id), datetime})
+                });
+                const data = await res.json();
+                addLog(`Запись создана! Статус: ${data.status}`);
+            } catch(e) { addLog(`Ошибка: ${e.message}`, true); }
+        }
+
+        loadDoctors();
+    </script>
+</body>
+</html>

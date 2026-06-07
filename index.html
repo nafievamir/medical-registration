@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Medical Registration</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .card { border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        button { background: #007bff; color: white; border: none; padding: 8px 16px; margin: 5px; cursor: pointer; border-radius: 5px; }
+        input { padding: 8px; margin: 5px; }
+        .log { background: #000; color: #0f0; padding: 10px; font-family: monospace; height: 200px; overflow-y: auto; }
+        .error { color: #f00; }
+    </style>
+</head>
+<body>
+    <h1>Medical Registration System</h1>
+    
+    <div class="card">
+        <h3>Doctors (port 5001)</h3>
+        <input type="text" id="name" placeholder="Name">
+        <input type="text" id="specialty" placeholder="Specialty">
+        <button onclick="createDoctor()">Add Doctor</button>
+        <button onclick="loadDoctors()">Refresh</button>
+        <div id="doctorsList"></div>
+    </div>
+    
+    <div class="card">
+        <h3>Schedule (port 5002)</h3>
+        <input type="number" id="docId" placeholder="Doctor ID">
+        <input type="text" id="time" placeholder="Time (10:00)">
+        <button onclick="addSlot()">Add Slot</button>
+        <div id="slotsList"></div>
+    </div>
+    
+    <div class="card">
+        <h3>Appointment (port 3000)</h3>
+        <input type="number" id="patId" placeholder="Patient ID">
+        <input type="number" id="docId2" placeholder="Doctor ID">
+        <input type="datetime-local" id="dt">
+        <button onclick="createAppointment()">Create Appointment</button>
+        <div id="appointmentsList"></div>
+    </div>
+    
+    <div class="card">
+        <h3>Logs</h3>
+        <div id="log" class="log">Ready...</div>
+    </div>
+
+    <script>
+        function addLog(msg, isError) {
+            const log = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const color = isError ? 'error' : 'success';
+            log.innerHTML += `<div class="${color}">[${time}] ${msg}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        async function loadDoctors() {
+            addLog('Loading doctors...');
+            try {
+                const res = await fetch('/api/doctors');
+                const data = await res.json();
+                document.getElementById('doctorsList').innerHTML = data.map(d => `<div>${d.name} (${d.specialty}) ID:${d.id}</div>`).join('');
+                addLog(`Loaded ${data.length} doctors`);
+            } catch(e) { addLog(`Error: ${e.message}`, true); }
+        }
+
+        async function createDoctor() {
+            const name = document.getElementById('name').value;
+            const specialty = document.getElementById('specialty').value;
+            if(!name || !specialty) { addLog('Fill all fields', true); return; }
+            addLog(`Creating doctor: ${name}`);
+            try {
+                const res = await fetch('/api/doctors', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name, specialty})
+                });
+                const data = await res.json();
+                addLog(`Doctor created ID:${data.id}`);
+                loadDoctors();
+            } catch(e) { addLog(`Error: ${e.message}`, true); }
+        }
+
+        async function addSlot() {
+            const doctor_id = document.getElementById('docId').value;
+            const time = document.getElementById('time').value;
+            if(!doctor_id || !time) { addLog('Fill all fields', true); return; }
+            addLog(`Adding slot: doctor ${doctor_id}, ${time}`);
+            try {
+                const res = await fetch('/api/schedule/add', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({doctor_id: parseInt(doctor_id), time})
+                });
+                const data = await res.json();
+                addLog(`Slot added: ${data.status}`);
+            } catch(e) { addLog(`Error: ${e.message}`, true); }
+        }
+
+        async function createAppointment() {
+            const patient_id = document.getElementById('patId').value;
+            const doctor_id = document.getElementById('docId2').value;
+            const datetime = document.getElementById('dt').value;
+            if(!patient_id || !doctor_id || !datetime) { addLog('Fill all fields', true); return; }
+            addLog(`Creating appointment: patient ${patient_id}, doctor ${doctor_id}`);
+            try {
+                const res = await fetch('/api/appointment/create', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({patient_id: parseInt(patient_id), doctor_id: parseInt(doctor_id), datetime})
+                });
+                const data = await res.json();
+                addLog(`Appointment created! Status: ${data.status}`);
+            } catch(e) { addLog(`Error: ${e.message}`, true); }
+        }
+
+        loadDoctors();
+        setInterval(loadDoctors, 5000);
+    </script>
+</body>
+</html>

@@ -1,6 +1,8 @@
 {
   "name": "appointment",
   "dependencies": {
-    "express": "^4.22.2"
+    "express": "^4.22.2",
+    "http-proxy-middleware": "^4.1.0",
+    "sqlite3": "^6.0.1"
   }
 }

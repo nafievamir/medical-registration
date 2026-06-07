@@ -2,127 +2,103 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Медицинская регистратура</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
         .container { max-width: 1400px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 40px; }
-        .header h1 { font-size: 2.5rem; color: white; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
-        .header p { color: rgba(255,255,255,0.9); font-size: 1.1rem; }
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
-        .stat-card { background: white; border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s; }
-        .stat-card:hover { transform: translateY(-5px); }
-        .stat-card i { font-size: 2.5rem; color: #667eea; margin-bottom: 10px; }
-        .stat-number { font-size: 2rem; font-weight: bold; color: #333; }
-        .stat-label { color: #666; margin-top: 5px; }
-        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
-        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .card h2 { font-size: 1.5rem; margin-bottom: 20px; color: #333; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
-        .card h2 i { color: #667eea; }
-        .form-group { margin-bottom: 15px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; transition: all 0.3s; }
-        input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 5px rgba(102,126,234,0.3); }
-        .btn { padding: 10px 20px; border: none; border-radius: 10px; font-size: 14px; cursor: pointer; transition: all 0.3s; margin-right: 10px; margin-top: 10px; }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
-        .btn-secondary { background: #6c757d; color: white; }
-        .list-item { background: #f8f9fa; border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .list-item .name { font-weight: 600; color: #333; }
-        .list-item .specialty { font-size: 12px; color: #666; margin-top: 3px; }
-        .badge { background: #667eea; color: white; padding: 4px 8px; border-radius: 20px; font-size: 11px; }
-        .log-panel { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .log-box { background: #1e1e1e; color: #0f0; font-family: 'Courier New', monospace; padding: 15px; border-radius: 10px; height: 200px; overflow-y: auto; font-size: 12px; }
-        .log-error { color: #ff6b6b; }
-        .log-success { color: #51cf66; }
-        .log-info { color: #74c0fc; }
-        .empty-state { text-align: center; color: #999; padding: 20px; }
-        @media (max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
+        h1 { text-align: center; color: white; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
+        .card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .card h2 { color: #667eea; margin-bottom: 15px; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+        input, select, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; }
+        button { background: #667eea; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #5a67d8; }
+        .list-item { background: #f8f9fa; padding: 10px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #667eea; }
+        .list-item strong { color: #333; }
+        .log { background: #1e1e1e; color: #0f0; padding: 10px; border-radius: 8px; height: 150px; overflow-y: auto; font-family: monospace; font-size: 12px; }
+        .log .error { color: #ff6b6b; }
+        .log .success { color: #51cf66; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-hospital-user"></i> Медицинская регистратура</h1>
-            <p>.NET интеграция: Врачи → Расписание → Записи</p>
+        <h1>🏥 Медицинская регистратура</h1>
+        <div class="grid">
+            <!-- Врачи -->
+            <div class="card">
+                <h2>👨‍⚕️ Врачи</h2>
+                <input type="text" id="docName" placeholder="ФИО врача">
+                <input type="text" id="docSpecialty" placeholder="Специальность">
+                <button onclick="createDoctor()">➕ Добавить врача</button>
+                <button onclick="loadDoctors()" style="background:#6c757d">🔄 Обновить</button>
+                <div id="doctorsList"></div>
+            </div>
+
+            <!-- Слоты -->
+            <div class="card">
+                <h2>📅 Слоты</h2>
+                <select id="slotDoctorId"><option value="">Выберите врача</option></select>
+                <input type="text" id="slotTime" placeholder="Время (например 10:00)">
+                <button onclick="addSlot()">➕ Добавить слот</button>
+                <div id="slotsList"></div>
+            </div>
+
+            <!-- Записи -->
+            <div class="card">
+                <h2>📝 Записи</h2>
+                <input type="number" id="appPatientId" placeholder="ID пациента">
+                <select id="appDoctorId"><option value="">Выберите врача</option></select>
+                <input type="datetime-local" id="appDatetime">
+                <button onclick="createAppointment()">✅ Создать запись</button>
+                <div id="appointmentsList"></div>
+            </div>
         </div>
 
-        <div class="stats">
-            <div class="stat-card"><i class="fas fa-user-md"></i><div class="stat-number" id="doctorCount">0</div><div class="stat-label">Врачей</div></div>
-            <div class="stat-card"><i class="fas fa-calendar-alt"></i><div class="stat-number" id="slotCount">0</div><div class="stat-label">Слотов</div></div>
-            <div class="stat-card"><i class="fas fa-notes-medical"></i><div class="stat-number" id="appointmentCount">0</div><div class="stat-label">Записей</div></div>
-        </div>
-
-        <div class="main-grid">
-            <div class="card">
-                <h2><i class="fas fa-user-md"></i> Модуль А: Врачи</h2>
-                <div class="form-group"><input type="text" id="doctorName" placeholder="ФИО врача"></div>
-                <div class="form-group"><input type="text" id="doctorSpecialty" placeholder="Специальность"></div>
-                <button class="btn btn-primary" onclick="createDoctor()"><i class="fas fa-plus"></i> Добавить врача</button>
-                <button class="btn btn-secondary" onclick="loadDoctors()"><i class="fas fa-sync"></i> Обновить</button>
-                <div id="doctorsList" style="margin-top: 20px;"></div>
-            </div>
-
-            <div class="card">
-                <h2><i class="fas fa-calendar-alt"></i> Модуль Б: Расписание</h2>
-                <div class="form-group"><input type="number" id="slotDoctorId" placeholder="ID врача"></div>
-                <div class="form-group"><input type="text" id="slotTime" placeholder="Время (10:00)"></div>
-                <button class="btn btn-primary" onclick="addSlot()"><i class="fas fa-plus"></i> Добавить слот</button>
-                <div id="slotsList" style="margin-top: 20px;"></div>
-            </div>
-        </div>
-
-        <div class="main-grid">
-            <div class="card">
-                <h2><i class="fas fa-notes-medical"></i> Модуль В: Записи</h2>
-                <div class="form-group"><input type="number" id="appointmentPatientId" placeholder="ID пациента"></div>
-                <div class="form-group"><input type="number" id="appointmentDoctorId" placeholder="ID врача"></div>
-                <div class="form-group"><input type="datetime-local" id="appointmentDatetime"></div>
-                <button class="btn btn-primary" onclick="createAppointment()"><i class="fas fa-check"></i> Создать запись</button>
-                <div id="appointmentsList" style="margin-top: 20px;"></div>
-            </div>
-
-            <div class="log-panel">
-                <h3><i class="fas fa-terminal"></i> Логи интеграции</h3>
-                <div id="logBox" class="log-box"><div class="log-info">🚀 .NET сервер запущен</div></div>
-                <button class="btn btn-secondary" onclick="clearLogs()" style="margin-top: 10px;"><i class="fas fa-trash"></i> Очистить логи</button>
-            </div>
+        <div class="card">
+            <h2>📡 Логи интеграции</h2>
+            <div id="log" class="log">🚀 Система готова к работе</div>
+            <button onclick="clearLogs()" style="width:auto; margin-top:10px; background:#6c757d">🗑 Очистить логи</button>
         </div>
     </div>
 
     <script>
-        function addLog(msg, type) {
-            const log = document.getElementById('logBox');
+        let doctors = [];
+
+        function addLog(msg, isError = false) {
+            const log = document.getElementById('log');
             const time = new Date().toLocaleTimeString();
-            const cls = type === 'error' ? 'log-error' : (type === 'success' ? 'log-success' : 'log-info');
-            log.innerHTML += `<div class="${cls}">[${time}] ${msg}</div>`;
+            log.innerHTML += `<div class="${isError ? 'error' : 'success'}">[${time}] ${msg}</div>`;
             log.scrollTop = log.scrollHeight;
         }
-        function clearLogs() { document.getElementById('logBox').innerHTML = '<div class="log-info">🗑 Логи очищены</div>'; }
+        function clearLogs() { document.getElementById('log').innerHTML = ''; addLog('Логи очищены'); }
+
+        function updateDoctorSelects() {
+            const slotSelect = document.getElementById('slotDoctorId');
+            const appSelect = document.getElementById('appDoctorId');
+            slotSelect.innerHTML = '<option value="">Выберите врача</option>';
+            appSelect.innerHTML = '<option value="">Выберите врача</option>';
+            doctors.forEach(d => {
+                slotSelect.innerHTML += `<option value="${d.id}">${d.name} (${d.specialty})</option>`;
+                appSelect.innerHTML += `<option value="${d.id}">${d.name} (${d.specialty})</option>`;
+            });
+        }
 
         async function loadDoctors() {
             try {
                 const res = await fetch('/api/doctors');
-                const data = await res.json();
-                document.getElementById('doctorCount').innerText = data.length;
-                if (!data.length) document.getElementById('doctorsList').innerHTML = '<div class="empty-state">Нет врачей</div>';
-                else document.getElementById('doctorsList').innerHTML = data.map(d => `<div class="list-item"><div><div class="name">${d.name}</div><div class="specialty">${d.specialty}</div></div><div class="badge">ID: ${d.id}</div></div>`).join('');
-                addLog(`Загружено ${data.length} врачей`, 'success');
-            } catch(e) { addLog(`Ошибка: ${e.message}`, 'error'); }
+                doctors = await res.json();
+                updateDoctorSelects();
+                if (doctors.length === 0) document.getElementById('doctorsList').innerHTML = '<div class="list-item">Нет врачей</div>';
+                else document.getElementById('doctorsList').innerHTML = doctors.map(d => `<div class="list-item"><strong>${d.name}</strong> — ${d.specialty} <span style="float:right">ID: ${d.id}</span></div>`).join('');
+                addLog(`Загружено врачей: ${doctors.length}`);
+            } catch(e) { addLog(`Ошибка: ${e.message}`, true); }
         }
 
         async function createDoctor() {
-            const name = document.getElementById('doctorName').value;
-            const specialty = document.getElementById('doctorSpecialty').value;
-            if (!name || !specialty) { addLog('Заполните поля', 'error'); return; }
+            const name = document.getElementById('docName').value;
+            const specialty = document.getElementById('docSpecialty').value;
+            if (!name || !specialty) { addLog('Заполните ФИО и специальность', true); return; }
             try {
                 const res = await fetch('/api/doctors', {
                     method: 'POST',
@@ -130,45 +106,78 @@
                     body: JSON.stringify({ name, specialty })
                 });
                 const data = await res.json();
-                addLog(`Врач создан ID: ${data.id}`, 'success');
-                document.getElementById('doctorName').value = '';
-                document.getElementById('doctorSpecialty').value = '';
+                addLog(`Врач создан! ID: ${data.id}, ${data.name}`);
+                document.getElementById('docName').value = '';
+                document.getElementById('docSpecialty').value = '';
                 loadDoctors();
-            } catch(e) { addLog(`Ошибка: ${e.message}`, 'error'); }
+            } catch(e) { addLog(`Ошибка: ${e.message}`, true); }
         }
 
         async function addSlot() {
-            const doctorId = document.getElementById('slotDoctorId').value;
+            const doctor_id = document.getElementById('slotDoctorId').value;
             const time = document.getElementById('slotTime').value;
-            if (!doctorId || !time) { addLog('Заполните поля', 'error'); return; }
+            if (!doctor_id || !time) { addLog('Выберите врача и укажите время', true); return; }
             try {
                 const res = await fetch('/api/schedule/add', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ doctorId: parseInt(doctorId), time })
+                    body: JSON.stringify({ doctorId: parseInt(doctor_id), time })
                 });
-                const data = await res.json();
-                addLog(`Слот добавлен: ${data.status}`, 'success');
-            } catch(e) { addLog(`Ошибка: ${e.message}`, 'error'); }
+                await res.json();
+                const doctor = doctors.find(d => d.id == doctor_id);
+                addLog(`Слот добавлен: врач ${doctor?.name}, время ${time}`);
+                document.getElementById('slotTime').value = '';
+                loadSlots();
+            } catch(e) { addLog(`Ошибка: ${e.message}`, true); }
+        }
+
+        async function loadSlots() {
+            try {
+                const res = await fetch('/api/slots');
+                const slots = await res.json();
+                if (slots.length === 0) document.getElementById('slotsList').innerHTML = '<div class="list-item">Нет слотов</div>';
+                else document.getElementById('slotsList').innerHTML = slots.map(s => {
+                    const doctor = doctors.find(d => d.id == s.doctorId);
+                    return `<div class="list-item"><strong>${doctor?.name || 'Врач ID:'+s.doctorId}</strong> — Время: ${s.time} <span style="float:right">ID слота: ${s.id}</span></div>`;
+                }).join('');
+            } catch(e) { console.log(e); }
         }
 
         async function createAppointment() {
-            const patientId = document.getElementById('appointmentPatientId').value;
-            const doctorId = document.getElementById('appointmentDoctorId').value;
-            const datetime = document.getElementById('appointmentDatetime').value;
-            if (!patientId || !doctorId || !datetime) { addLog('Заполните поля', 'error'); return; }
+            const patient_id = document.getElementById('appPatientId').value;
+            const doctor_id = document.getElementById('appDoctorId').value;
+            const datetime = document.getElementById('appDatetime').value;
+            if (!patient_id || !doctor_id || !datetime) { addLog('Заполните все поля', true); return; }
             try {
                 const res = await fetch('/api/appointment/create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ patientId: parseInt(patientId), doctorId: parseInt(doctorId), dateTime: datetime })
+                    body: JSON.stringify({ patientId: parseInt(patient_id), doctorId: parseInt(doctor_id), dateTime: datetime })
                 });
                 const data = await res.json();
-                addLog(`Запись создана! Статус: ${data.status}`, 'success');
-            } catch(e) { addLog(`Ошибка: ${e.message}`, 'error'); }
+                if (res.ok) {
+                    const doctor = doctors.find(d => d.id == doctor_id);
+                    addLog(`Запись создана! Пациент ${patient_id} → врач ${doctor?.name}`);
+                } else addLog(`Ошибка: ${data.error}`, true);
+                loadAppointments();
+            } catch(e) { addLog(`Ошибка: ${e.message}`, true); }
+        }
+
+        async function loadAppointments() {
+            try {
+                const res = await fetch('/api/appointments');
+                const appointments = await res.json();
+                if (appointments.length === 0) document.getElementById('appointmentsList').innerHTML = '<div class="list-item">Нет записей</div>';
+                else document.getElementById('appointmentsList').innerHTML = appointments.map(a => {
+                    const doctor = doctors.find(d => d.id == a.doctorId);
+                    return `<div class="list-item"><strong>Пациент ID: ${a.patientId}</strong> → Врач: ${doctor?.name || 'ID:'+a.doctorId}<br>📅 ${a.dateTime} <span style="float:right">Статус: ${a.status}</span></div>`;
+                }).join('');
+            } catch(e) { console.log(e); }
         }
 
         loadDoctors();
+        loadSlots();
+        loadAppointments();
         setInterval(loadDoctors, 5000);
     </script>
 </body>
