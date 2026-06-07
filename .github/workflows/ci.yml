@@ -26,21 +26,21 @@ jobs:
 
       - name: Install Python dependencies
         run: |
-          pip install flask
-
-      - name: Install Node dependencies
-        run: |
-          cd /home/runner/work/medical-registration/medical-registration
-          npm install || true
+          pip install flask flake8
 
       - name: Lint Python (flake8)
         run: |
-          pip install flake8
-          flake8 *.py --max-line-length=120 || true
+          flake8 *.py --max-line-length=120 --exit-zero || true
 
-      - name: Run Docker Compose
+      - name: Build Docker images
         run: |
-          docker-compose up -d
+          docker build -f Dockerfile.doctors -t doctors:latest .
+          docker build -f Dockerfile.schedule -t schedule:latest .
+          docker build -f Dockerfile.appointment -t appointment:latest .
+
+      - name: Run containers with docker compose
+        run: |
+          docker compose up -d
           sleep 5
 
       - name: Test doctors service
@@ -57,10 +57,10 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"patient_id":1,"doctor_id":1,"datetime":"2025-06-07T10:00:00"}' || echo "Appointment service not responding"
 
-      - name: Docker Compose logs
+      - name: Show logs
         if: always()
-        run: docker-compose logs
+        run: docker compose logs
 
-      - name: Stop Docker Compose
+      - name: Stop containers
         if: always()
-        run: docker-compose down
+        run: docker compose down
