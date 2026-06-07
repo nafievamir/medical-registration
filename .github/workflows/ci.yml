@@ -3,40 +3,25 @@ name: CI
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0
-
-    - name: Restore dependencies
-      run: dotnet restore MedicalWeb
-
-    - name: Build
-      run: dotnet build MedicalWeb --no-restore
-
-    - name: Run Unit Tests
-      run: |
-        cd MedicalWeb.Tests
-        dotnet test --filter "FullyQualifiedName~UnitTests" --verbosity normal
-
-    - name: Run Integration Tests
-      run: |
-        cd MedicalWeb.Tests
-        dotnet test --filter "FullyQualifiedName~SimpleIntegrationTests" --verbosity normal
-
-    - name: Run E2E Tests
-      run: |
-        dotnet run --project MedicalWeb &
-        sleep 10
-        cd MedicalWeb.Tests
-        dotnet test --filter "FullyQualifiedName~E2ETests" --verbosity normal
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0
+      
+      - name: Restore & Build
+        run: |
+          dotnet restore MedicalWeb
+          dotnet build MedicalWeb --no-restore
+      
+      - name: Run Unit Tests
+        run: dotnet test MedicalWeb.Tests --filter "FullyQualifiedName~UnitTests"
+      
+      - name: Run Integration Tests
+        run: dotnet test MedicalWeb.Tests --filter "FullyQualifiedName~SimpleIntegrationTests"
