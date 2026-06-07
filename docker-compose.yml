@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  doctors:
+    build:
+      context: .
+      dockerfile: Dockerfile.doctors
+    ports:
+      - "5001:5001"
+    networks:
+      - mednet
+
+  schedule:
+    build:
+      context: .
+      dockerfile: Dockerfile.schedule
+    ports:
+      - "5002:5002"
+    networks:
+      - mednet
+
+  appointment:
+    build:
+      context: .
+      dockerfile: Dockerfile.appointment
+    ports:
+      - "3000:3000"
+    networks:
+      - mednet
+
+networks:
+  mednet:
+    driver: bridge
